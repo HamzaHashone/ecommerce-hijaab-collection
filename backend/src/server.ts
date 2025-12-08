@@ -28,12 +28,22 @@ app.use((req, res, next) => {
 });
 
 // MongoDB Connection
-const mongoUri =
-  process.env.MONGO_URI ||""
+const mongoUri = process.env.MONGO_URI || "";
+
+if (!mongoUri || mongoUri.trim() === "") {
+  console.error("❌ ERROR: MONGO_URI environment variable is not set!");
+  console.error("Please set MONGO_URI in Railway environment variables.");
+  console.error("Format: mongodb+srv://username:password@cluster.mongodb.net/database");
+  process.exit(1);
+}
+
 mongoose
   .connect(mongoUri)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err.message);
+    process.exit(1);
+  });
 
 // Start Server
 const PORT = process.env.PORT || 5000;
