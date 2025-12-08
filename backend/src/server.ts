@@ -93,7 +93,3 @@ if (!mongoUri || mongoUri.trim() === "") {
 //     console.log(`User disconnected: ${(socket as any).user.id}`);
 //   });
 // });
-
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
