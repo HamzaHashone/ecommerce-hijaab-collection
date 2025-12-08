@@ -1,0 +1,42 @@
+# Dependencies
+node_modules
+backend/node_modules
+frontend/node_modules
+
+# Build outputs (will be rebuilt in Docker)
+backend/dist
+frontend/.next
+frontend/out
+frontend/build
+
+# Git
+.git
+.gitignore
+
+# Environment files
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Frontend (not needed for backend deployment)
+frontend/
+
+# Railway config (not needed in Docker)
+railway.json
+
+# Other
+.DS_Store
+*.tsbuildinfo
