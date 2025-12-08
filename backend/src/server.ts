@@ -14,7 +14,7 @@ dotenv.config();
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000","https://production-us-west2.railway-registry.com"],
     credentials: true,
   })
 );
@@ -23,7 +23,7 @@ app.use(cookieParser());
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Origin", ["http://localhost:3000","https://production-us-west2.railway-registry.com"]);
   next();
 });
 
