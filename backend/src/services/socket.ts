@@ -4,11 +4,35 @@ import jwt from "jsonwebtoken";
 
 const onlineUsers: Record<string, string> = {};
 let io: Server;
+
 export const initSocket = (server: any) => {
   io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps, Postman)
+        if (!origin) return callback(null, true);
+        
+        // Always allow localhost for development
+        if (origin === "http://localhost:3000" || origin === "http://localhost:3001") {
+          return callback(null, true);
+        }
+        
+        // Allow if FRONTEND_URL is set and matches
+        if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
+          return callback(null, true);
+        }
+        
+        // Allow Railway domains (for production)
+        if (origin.includes("railway.app") || origin.includes("railway-registry.com")) {
+          console.log(`Socket.IO: Allowing Railway origin: ${origin}`);
+          return callback(null, true);
+        }
+        
+        console.log(`Socket.IO: Blocked origin: ${origin}`);
+        callback(null, false);
+      },
       credentials: true,
+      methods: ["GET", "POST"],
     },
   });
 
