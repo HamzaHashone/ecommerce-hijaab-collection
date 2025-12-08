@@ -2,7 +2,13 @@ import axios from "axios";
 import { User } from "../types";
 
 // Base API URL - use environment variable or fallback to localhost
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+// Remove trailing slash to avoid double slashes in URLs
+const getBaseUrl = () => {
+  const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  return url.replace(/\/+$/, ""); // Remove trailing slashes
+};
+
+const API_BASE_URL = getBaseUrl();
 
 export interface LoginProps {
   email: string;
