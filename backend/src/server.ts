@@ -14,29 +14,16 @@ dotenv.config();
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:3000","https://production-us-west2.railway-registry.com"],
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );
 
 app.use(cookieParser());
 
-// Allowed origins
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://production-us-west2.railway-registry.com"
-];
-
-// Dynamic CORS header middleware
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  
-  // Check if the request origin is in the allowed list
-  if (origin && allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-  }
-  
   res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   next();
 });
 

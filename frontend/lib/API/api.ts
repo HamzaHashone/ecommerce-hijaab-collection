@@ -1,6 +1,9 @@
 import axios from "axios";
 import { User } from "../types";
 
+// Base API URL - use environment variable or fallback to localhost
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
 export interface LoginProps {
   email: string;
   password: string;
@@ -11,7 +14,7 @@ export const Login = async ({
   password,
 }: LoginProps): Promise<User | null> => {
   const res = await axios.post(
-    "http://localhost:5000/auth/login",
+    `${API_BASE_URL}/auth/login`,
     {
       email,
       password,
@@ -52,7 +55,7 @@ export const Register = async ({
   });
   try {
     const res = await axios.post(
-      "http://localhost:5000/auth/register",
+      `${API_BASE_URL}/auth/register`,
       {
         firstName,
         lastName,
@@ -74,7 +77,7 @@ export const Register = async ({
 };
 
 export const MyProfile = async () => {
-  const res = await axios.get("http://localhost:5000/auth/myProfile", {
+  const res = await axios.get(`${API_BASE_URL}/auth/myProfile`, {
     withCredentials: true,
   });
   return res.data;
@@ -93,7 +96,7 @@ export interface updateProfile {
 
 export const UpdateProfile = async (profile: updateProfile) => {
   const res = await axios.patch(
-    "http://localhost:5000/auth/updateProfile",
+    `${API_BASE_URL}/auth/updateProfile`,
     profile,
     {
       withCredentials: true,
@@ -103,7 +106,7 @@ export const UpdateProfile = async (profile: updateProfile) => {
 };
 
 export const Logout = async () => {
-  const res = await axios.get("http://localhost:5000/auth/logout", {
+  const res = await axios.get(`${API_BASE_URL}/auth/logout`, {
     withCredentials: true,
   });
   return res.data;
@@ -118,14 +121,14 @@ export interface IAddAddress {
 }
 
 export const AddAddress = async (data: IAddAddress) => {
-  const res = await axios.post("http://localhost:5000/auth/addAddress", data, {
+  const res = await axios.post(`${API_BASE_URL}/auth/addAddress`, data, {
     withCredentials: true,
   });
   return res.data;
 };
 
 export const RemoveAddress = async (id: string) => {
-  const res = await axios.delete(`http://localhost:5000/auth/address/${id}`, {
+  const res = await axios.delete(`${API_BASE_URL}/auth/address/${id}`, {
     withCredentials: true,
   });
   return res.data;
@@ -133,7 +136,7 @@ export const RemoveAddress = async (id: string) => {
 
 export const UpdateAddress = async (id: string, data: IAddAddress) => {
   const res = await axios.put(
-    `http://localhost:5000/auth/address/${id}`,
+    `${API_BASE_URL}/auth/address/${id}`,
     data,
     {
       withCredentials: true,
@@ -143,7 +146,7 @@ export const UpdateAddress = async (id: string, data: IAddAddress) => {
 };
 
 export const forgotPassword = async (email: string) => {
-  const res = await axios.post(`http://localhost:5000/auth/forgotPassword`, {
+  const res = await axios.post(`${API_BASE_URL}/auth/forgotPassword`, {
     email,
   });
   return res.data;
@@ -151,7 +154,7 @@ export const forgotPassword = async (email: string) => {
 
 export const CreatePassword = async (email: string, password: string) => {
   const res = await axios.post(
-    `http://localhost:5000/auth/create-password/${email}`,
+    `${API_BASE_URL}/auth/create-password/${email}`,
     { password }
   );
   return res.data;
@@ -178,7 +181,7 @@ export interface IProduct {
 
 export const CreateProduct = async (formData: IProduct) => {
   const res = await axios.post(
-    "http://localhost:5000/products/create",
+    `${API_BASE_URL}/products/create`,
     formData,
     { withCredentials: true }
   );
@@ -192,17 +195,17 @@ export const AllProducts = async (params?: {
   sort?: string;
   filter?: string;
 }) => {
-  const res = await axios.get("http://localhost:5000/products/all", { params });
+  const res = await axios.get(`${API_BASE_URL}/products/all`, { params });
   return res.data;
 };
 
 export const DeleteProduct = async (id: string) => {
-  const res = await axios.delete(`http://localhost:5000/products/delete/${id}`);
+  const res = await axios.delete(`${API_BASE_URL}/products/delete/${id}`);
   return res.data;
 };
 
 export const GetProductById = async (id: string) => {
-  const res = await axios.get(`http://localhost:5000/products/${id}`);
+  const res = await axios.get(`${API_BASE_URL}/products/${id}`);
   return res.data;
 };
 export interface UProduct {
@@ -222,7 +225,7 @@ export interface UProduct {
 
 export const UpdateProduct = async (id: any, formData: UProduct) => {
   const res = await axios.put(
-    `http://localhost:5000/products/update/${id.id}`,
+    `${API_BASE_URL}/products/update/${id.id}`,
     formData,
     {
       withCredentials: true,
@@ -240,7 +243,7 @@ export const getAllUsers = async (params?: {
   name?: string;
   filter?: string;
 }) => {
-  const res = await axios.get(`http://localhost:5000/users/all`, {
+  const res = await axios.get(`${API_BASE_URL}/users/all`, {
     params,
     withCredentials: true,
   });
@@ -248,14 +251,14 @@ export const getAllUsers = async (params?: {
 };
 
 export const GetUserById = async (id: string) => {
-  const res = await axios.get(`http://localhost:5000/users/${id}`, {
+  const res = await axios.get(`${API_BASE_URL}/users/${id}`, {
     withCredentials: true,
   });
   return res.data;
 };
 
 export const DeleteUser = async (id: string) => {
-  const res = await axios.delete(`http://localhost:5000/users/${id}`, {
+  const res = await axios.delete(`${API_BASE_URL}/users/${id}`, {
     withCredentials: true,
   });
   return res.data;
@@ -263,7 +266,7 @@ export const DeleteUser = async (id: string) => {
 
 export const UpdateUserStatus = async (id: string, status: string) => {
   const res = await axios.patch(
-    `http://localhost:5000/users/${id}/status`,
+    `${API_BASE_URL}/users/${id}/status`,
     { status },
     {
       withCredentials: true,
@@ -273,21 +276,21 @@ export const UpdateUserStatus = async (id: string, status: string) => {
 };
 
 export const GetSettings = async () => {
-  const res = await axios.get(`http://localhost:5000/settings`, {
+  const res = await axios.get(`${API_BASE_URL}/settings`, {
     withCredentials: true,
   });
   return res.data;
 };
 
 export const CreateSettings = async (data: any) => {
-  const res = await axios.post(`http://localhost:5000/settings`, data, {
+  const res = await axios.post(`${API_BASE_URL}/settings`, data, {
     withCredentials: true,
   });
   return res.data;
 };
 
 export const UpdateSettings = async (id: string, data: any) => {
-  const res = await axios.put(`http://localhost:5000/settings/${id}`, data, {
+  const res = await axios.put(`${API_BASE_URL}/settings/${id}`, data, {
     withCredentials: true,
   });
   return res.data;
@@ -301,7 +304,7 @@ export interface IAddToCart {
 }
 export const AddToCart = async (data: IAddToCart) => {
   const res = await axios.post(
-    `http://localhost:5000/addToCart`,
+    `${API_BASE_URL}/addToCart`,
     data,
     {
       withCredentials: true,
