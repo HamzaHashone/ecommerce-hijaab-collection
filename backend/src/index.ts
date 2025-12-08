@@ -21,6 +21,15 @@ app.use(
   })
 );
 
+// Health check route
+app.get("/", (req, res) => {
+  res.status(200).json({ 
+    status: "ok", 
+    message: "Server is running",
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.use("/auth", authRoutes);
 app.use("/products", productsRoutes)
 app.use("/users",userRoutes)

@@ -27,29 +27,33 @@ app.use((req, res, next) => {
   next();
 });
 
-// MongoDB Connection
-const mongoUri = process.env.MONGO_URI || "";
-
-if (!mongoUri || mongoUri.trim() === "") {
-  console.error("❌ ERROR: MONGO_URI environment variable is not set!");
-  console.error("Please set MONGO_URI in Railway environment variables.");
-  console.error("Format: mongodb+srv://username:password@cluster.mongodb.net/database");
-  process.exit(1);
-}
-
-mongoose
-  .connect(mongoUri)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => {
-    console.error("❌ MongoDB connection error:", err.message);
-    process.exit(1);
-  });
-
-// Start Server
+// Start Server first (non-blocking)
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
 initSocket(server);
+
+server.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});
+
+// MongoDB Connection (non-blocking - server will start even if MongoDB fails)
+const mongoUri = process.env.MONGO_URI || "";
+
+if (!mongoUri || mongoUri.trim() === "") {
+  console.error("⚠️  WARNING: MONGO_URI environment variable is not set!");
+  console.error("Please set MONGO_URI in Railway environment variables.");
+  console.error("Format: mongodb+srv://username:password@cluster.mongodb.net/database");
+  console.error("Server will continue running but database operations will fail.");
+} else {
+  mongoose
+    .connect(mongoUri)
+    .then(() => console.log("✅ MongoDB Connected"))
+    .catch((err) => {
+      console.error("❌ MongoDB connection error:", err.message);
+      console.error("Server will continue running but database operations will fail.");
+    });
+}
 
 // const io = new Server(server, {
 //   cors: {
