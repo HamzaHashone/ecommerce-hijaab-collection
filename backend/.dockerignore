@@ -1,0 +1,30 @@
+# Dependencies
+node_modules
+
+# Build outputs (will be rebuilt in Docker)
+dist
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Other
+.DS_Store
+*.tsbuildinfo
+uploads/
