@@ -14,19 +14,13 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-  })
-);
-
-// Health check route
+// Health check route (before CORS to allow direct browser access)
 app.get("/", (req, res) => {
   res.status(200).json({ 
     status: "ok", 
     message: "Server is running",
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "development"
   });
 });
 

@@ -11,21 +11,29 @@ import { initSocket } from "./services/socket";
 
 dotenv.config();
 
-// Middleware
+// Allowed origins
+const allowedOrigins = [
+  "http://localhost:3000",
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
+// CORS middleware
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like direct browser access, Postman, curl)
+      if (!origin) return callback(null, true);
+      
+      // Allow if origin is in allowed list, or if it's a healthcheck
+      if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
     credentials: true,
   })
 );
-
-app.use(cookieParser());
-
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  next();
-});
 
 // Start Server first (non-blocking)
 const PORT = process.env.PORT || 5000;
