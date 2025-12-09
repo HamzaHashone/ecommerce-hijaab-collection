@@ -6,30 +6,47 @@ const onlineUsers: Record<string, string> = {};
 let io: Server;
 
 export const initSocket = (server: any) => {
+  // Allowed origins for Socket.IO
+  const allowedOrigins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://ecommerce-hijaab-collection.vercel.app",
+    "https://ecommerce-hijaab-collection-production.up.railway.app",
+    process.env.FRONTEND_URL
+  ].filter(Boolean);
+  
+  console.log("🔌 Socket.IO allowed origins:", allowedOrigins);
+  
   io = new Server(server, {
     cors: {
       origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps, Postman)
-        if (!origin) return callback(null, true);
-        
-        // Always allow localhost for development
-        if (origin === "http://localhost:3000" || origin === "http://localhost:3001"|| origin === "https://ecommerce-hijaab-collection.vercel.app"|| origin === "https://ecommerce-hijaab-collection-production.up.railway.app") {
+        if (!origin) {
+          console.log("✅ Socket.IO: Allowing request with no origin");
           return callback(null, true);
         }
         
-        // Allow if FRONTEND_URL is set and matches
-        if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
+        // Check if origin is in allowed list
+        if (allowedOrigins.includes(origin)) {
+          console.log(`✅ Socket.IO: Allowing origin: ${origin}`);
+          return callback(null, true);
+        }
+        
+        // Allow Vercel preview deployments (any *.vercel.app subdomain)
+        if (origin.includes(".vercel.app")) {
+          console.log(`✅ Socket.IO: Allowing Vercel origin: ${origin}`);
           return callback(null, true);
         }
         
         // Allow Railway domains (for production)
         if (origin.includes("railway.app") || origin.includes("railway-registry.com")) {
-          console.log(`Socket.IO: Allowing Railway origin: ${origin}`);
+          console.log(`✅ Socket.IO: Allowing Railway origin: ${origin}`);
           return callback(null, true);
         }
         
-        console.log(`Socket.IO: Blocked origin: ${origin}`);
-        callback(null, false);
+        // Reject with Error object (required by Socket.IO for proper CORS rejection)
+        console.log(`❌ Socket.IO: Blocked origin: ${origin}`);
+        callback(new Error(`Socket.IO CORS: Origin ${origin} is not allowed`));
       },
       credentials: true,
       methods: ["GET", "POST"],
