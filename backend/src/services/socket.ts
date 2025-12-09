@@ -13,7 +13,7 @@ export const initSocket = (server: any) => {
         if (!origin) return callback(null, true);
         
         // Always allow localhost for development
-        if (origin === "http://localhost:3000" || origin === "http://localhost:3001") {
+        if (origin === "http://localhost:3000" || origin === "http://localhost:3001"|| origin === "https://ecommerce-hijaab-collection.vercel.app"|| origin === "https://ecommerce-hijaab-collection-production.up.railway.app") {
           return callback(null, true);
         }
         
