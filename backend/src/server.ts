@@ -19,23 +19,63 @@ const allowedOrigins = [
   "https://ecommerce-hijaab-collection-production.up.railway.app"
 ].filter(Boolean);
 
-// CORS middleware
+// Also allow Vercel preview deployments (any subdomain of vercel.app)
+const isVercelOrigin = (origin: string): boolean => {
+  return origin.includes(".vercel.app");
+};
+
+// Log allowed origins on startup
+console.log("🌐 Allowed CORS origins:", allowedOrigins);
+
+// CORS middleware with better error handling
 app.use(
   cors({
     origin: function (origin, callback) {
       // Allow requests with no origin (like direct browser access, Postman, curl)
-      if (!origin) return callback(null, true);
+      if (!origin) {
+        console.log("✅ CORS: Allowing request with no origin");
+        return callback(null, true);
+      }
       
-      // Allow if origin is in allowed list, or if it's a healthcheck
-      if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+      // Check if origin is in allowed list
+      if (allowedOrigins.includes(origin)) {
+        console.log(`✅ CORS: Allowing origin: ${origin}`);
+        callback(null, true);
+      } else if (isVercelOrigin(origin)) {
+        // Allow any Vercel preview deployment
+        console.log(`✅ CORS: Allowing Vercel origin: ${origin}`);
         callback(null, true);
       } else {
-        callback(null, false);
+        console.log(`❌ CORS: Blocked origin: ${origin}`);
+        console.log(`   Allowed origins: ${allowedOrigins.join(", ")}`);
+        callback(new Error(`CORS: Origin ${origin} is not allowed`));
       }
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    exposedHeaders: ["Set-Cookie"],
   })
 );
+
+// Additional CORS headers middleware (for preflight requests)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  
+  if (origin && (allowedOrigins.includes(origin) || isVercelOrigin(origin))) {
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+  }
+  
+  // Handle preflight requests
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  
+  next();
+});
 
 // Start Server first (non-blocking)
 const PORT = process.env.PORT || 5000;
