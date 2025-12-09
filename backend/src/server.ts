@@ -14,7 +14,8 @@ dotenv.config();
 // Allowed origins
 const allowedOrigins = [
   "http://localhost:3000",
-  process.env.FRONTEND_URL
+  process.env.FRONTEND_URL,
+  "https://ecommerce-hijaab-collection.vercel.app"
 ].filter(Boolean);
 
 // CORS middleware
