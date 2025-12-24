@@ -6,8 +6,44 @@ import productsRoutes from "./routes/products.route";
 import userRoutes from "./routes/user.route";
 import settingsRoutes from "./routes/settings.route";
 import orderRouter from "./routes/order.route";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
+
+// Allowed origins
+const allowedOrigins = [
+  "http://localhost:3000",
+  process.env.FRONTEND_URL,
+].filter(Boolean) as string[];
+
+// Also allow Vercel preview deployments
+const isVercelOrigin = (origin: string): boolean => {
+  return origin.includes(".vercel.app");
+};
+
+console.log("🌐 Allowed CORS origins:", allowedOrigins);
+
+// CORS middleware - MUST be before routes
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) {
+        return callback(null, true);
+      }
+      if (allowedOrigins.includes(origin) || isVercelOrigin(origin)) {
+        callback(null, true);
+      } else {
+        console.log(`❌ CORS: Blocked origin: ${origin}`);
+        callback(new Error(`CORS: Origin ${origin} is not allowed`));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  })
+);
 
 // Middleware to parse JSON bodies
 app.use(express.json());
