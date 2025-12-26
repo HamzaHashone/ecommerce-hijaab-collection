@@ -17,10 +17,12 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { CreditCard, Lock, Truck } from "lucide-react"
+import { useGetCart } from "@/lib/hooks/api"
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const [cartItems, setCartItems] = useState(cart.getItems())
+  const {data: cartData} = useGetCart()
+  const cartItems = cartData?.cart?.items
   const [isProcessing, setIsProcessing] = useState(false)
 
   // Form state
@@ -43,13 +45,10 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     cart.loadFromStorage()
-    const items = cart.getItems()
-    setCartItems(items)
-
-    if (items.length === 0) {
+    if (cartItems?.length === 0) {
       router.push("/cart")
     }
-  }, [router])
+  }, [cartItems, router])
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -72,7 +71,7 @@ export default function CheckoutPage() {
     router.push("/checkout/success")
   }
 
-  if (cartItems.length === 0) {
+  if (cartItems?.length === 0) {
     return null // Will redirect in useEffect
   }
 
@@ -291,26 +290,26 @@ export default function CheckoutPage() {
                 <CardContent className="space-y-4">
                   {/* Order Items */}
                   <div className="space-y-3">
-                    {cartItems.map((item) => {
-                      const product = mockProducts.find((p) => p._id === item.productId)
-                      if (!product) return null
+                    {cartItems?.map((item: any) => {
+                      // const product = mockProducts.find((p) => p._id === item.productId)
+                      // if (!product) return null
 
                       return (
-                        <div key={`${item.productId}-${item.color}-${item.size}`} className="flex gap-3">
+                        <div key={`${item._id}-${item.color}-${item.size}`} className="flex gap-3">
                           <Image
-                            src={product.images[0] || "/placeholder.svg"}
-                            alt={product.name}
+                            src={item.product?.images[0] || "/placeholder.svg"}
+                            alt={item.product?.title || "Product Image"}
                             width={60}
                             height={60}
                             className="w-15 h-15 object-cover rounded"
                           />
                           <div className="flex-1">
-                            <h4 className="font-medium text-sm">{product.name}</h4>
+                            <h4 className="font-medium text-sm">{item.product?.title}</h4>
                             <p className="text-xs text-slate-600">
                               {item.color} • {item.size} • Qty: {item.quantity}
                             </p>
                             <p className="text-sm font-semibold text-amber-800">
-                              ${(item.price * item.quantity).toFixed(2)}
+                              ${(item.unitPrice * item.quantity).toFixed(2)}
                             </p>
                           </div>
                         </div>
@@ -324,20 +323,24 @@ export default function CheckoutPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
-                      <span>${subtotal.toFixed(2)}</span>
+                      <span>${cartData?.cart?.totalPrice.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Shipping</span>
-                      <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
+                      <span>{cartData?.cart?.totalPrice > 50 ? "Free" : `$${9.99.toFixed(2)}`}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Tax</span>
-                      <span>${tax.toFixed(2)}</span>
+                      <span>Included Tax (19%)</span>
+                      <span>${((cartData?.cart?.totalPrice / 119) * 19).toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Voucher Discount</span>
+                      <span className="text-red-600">-${cartData?.cart?.voucherDiscount.toFixed(2)}</span>
                     </div>
                     <Separator />
                     <div className="flex justify-between font-semibold text-lg">
                       <span>Total</span>
-                      <span className="text-amber-800">${total.toFixed(2)}</span>
+                      <span className="text-amber-800">${(cartData?.cart?.totalPrice - cartData?.cart?.voucherDiscount).toFixed(2)}</span>
                     </div>
                   </div>
 
