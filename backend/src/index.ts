@@ -7,6 +7,7 @@ import userRoutes from "./routes/user.route";
 import settingsRoutes from "./routes/settings.route";
 import orderRouter from "./routes/order.route";
 import dotenv from "dotenv";
+import voucherRouter from "./routes/voucher.route";
 
 dotenv.config();
 
@@ -23,9 +24,6 @@ const isVercelOrigin = (origin: string): boolean => {
   return origin.includes(".vercel.app");
 };
 
-console.log("🌐 Allowed CORS origins:", allowedOrigins);
-
-// CORS middleware - MUST be before routes
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -64,6 +62,7 @@ app.use("/auth", authRoutes);
 app.use("/products", productsRoutes)
 app.use("/users",userRoutes)
 app.use("/settings",settingsRoutes)
-app.use("/addToCart",orderRouter)
+app.use("/cart",orderRouter)
+app.use("/voucher",voucherRouter)
 
 export default app;

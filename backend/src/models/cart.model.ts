@@ -19,8 +19,16 @@ const CartItemSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  price: {
+  unitPrice: {
     type: Number,
+    required: true
+  },
+  totalPrice: {
+    type: Number,
+    required: true
+  },
+  product: {
+    type: Object,
     required: true
   }
 });
@@ -40,13 +48,21 @@ const CartSchema = new mongoose.Schema({
   totalPrice: {
     type: Number,
     default: 0
+  },
+  voucherCode: {
+    type: String,
+    default: null
+  },
+  voucherDiscount: {
+    type: Number,
+    default: 0
   }
 }, { timestamps: true });
 
 // Update totals before saving
 CartSchema.pre('save', function(next) {
   this.totalItems = this.items.reduce((total, item) => total + item.quantity, 0);
-  this.totalPrice = this.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+  this.totalPrice = this.items.reduce((total, item) => total + item.totalPrice, 0);
   next();
 });
 

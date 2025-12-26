@@ -24,8 +24,7 @@ export const authenticateUser = async (
       res.clearCookie("Ecommerce");
       return res.status(401).json({ message: "Unauthorized.." });
     }
-    (req as any).user = decoded;
-    console.log(user?.status, "aslkufhak", decoded.user.status, "aslkjhfkjh");
+    (req as any).user = decoded.user;
     next();
   } catch (error) {
     return res.status(401).json({ message: "Invalid or expired token.." });

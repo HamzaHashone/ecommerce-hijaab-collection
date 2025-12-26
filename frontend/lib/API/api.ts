@@ -101,13 +101,9 @@ export interface updateProfile {
 }
 
 export const UpdateProfile = async (profile: updateProfile) => {
-  const res = await axios.patch(
-    `${API_BASE_URL}/auth/updateProfile`,
-    profile,
-    {
-      withCredentials: true,
-    }
-  );
+  const res = await axios.patch(`${API_BASE_URL}/auth/updateProfile`, profile, {
+    withCredentials: true,
+  });
   return res.data;
 };
 
@@ -141,13 +137,9 @@ export const RemoveAddress = async (id: string) => {
 };
 
 export const UpdateAddress = async (id: string, data: IAddAddress) => {
-  const res = await axios.put(
-    `${API_BASE_URL}/auth/address/${id}`,
-    data,
-    {
-      withCredentials: true,
-    }
-  );
+  const res = await axios.put(`${API_BASE_URL}/auth/address/${id}`, data, {
+    withCredentials: true,
+  });
   return res.data;
 };
 
@@ -186,11 +178,9 @@ export interface IProduct {
 }
 
 export const CreateProduct = async (formData: IProduct) => {
-  const res = await axios.post(
-    `${API_BASE_URL}/products/create`,
-    formData,
-    { withCredentials: true }
-  );
+  const res = await axios.post(`${API_BASE_URL}/products/create`, formData, {
+    withCredentials: true,
+  });
   return res.data;
 };
 
@@ -305,18 +295,104 @@ export const UpdateSettings = async (id: string, data: any) => {
 export interface IAddToCart {
   productId: string;
   color: string;
-  quantity: string;
+  quantity: string | number;
   size: string;
 }
 export const AddToCart = async (data: IAddToCart) => {
+  const res = await axios.post(`${API_BASE_URL}/cart`, data, {
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+export interface IUpdateCart {
+  productId: string;
+  color: string;
+  quantity: string | number;
+  size: string;
+}
+export const UpdateCart = async (data: IUpdateCart) => {
+  const res = await axios.put(`${API_BASE_URL}/cart`, data, {
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+export const GetCart = async () => {
+  const res = await axios.get(`${API_BASE_URL}/cart`, {
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+export const RemoveFromCart = async (
+  productId: string,
+  color: string,
+  size: string
+) => {
+  const res = await axios.delete(`${API_BASE_URL}/cart`, {
+    withCredentials: true,
+    data: {
+      productId,
+      color,
+      size,
+    },
+  });
+  return res.data;
+};
+
+export const createVoucher = async (data: any) => {
+  const res = await axios.post(`${API_BASE_URL}/voucher/create`, data, {
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+export const getAllVouchers = async (params?: {
+  limit?: number;
+  skip?: number;
+  code?: string;
+}) => {
+  const res = await axios.get(`${API_BASE_URL}/voucher/all`, {
+    params,
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+export const getVoucherById = async (id: string) => {
+  const res = await axios.get(`${API_BASE_URL}/voucher/${id}`, {
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+export const updateVoucher = async (id: string, data: any) => {
+  const res = await axios.put(`${API_BASE_URL}/voucher/${id}`, data, {
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+export const deleteVoucher = async (id: string) => {
+  const res = await axios.delete(`${API_BASE_URL}/voucher/${id}`, {
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+export const ApplyVoucher = async (voucherCode: string) => {
   const res = await axios.post(
-    `${API_BASE_URL}/addToCart`,
-    data,
-    {
-      withCredentials: true,
-    }
+    `${API_BASE_URL}/voucher/apply`,
+    { voucherCode },
+    { withCredentials: true }
   );
   return res.data;
 };
 
-
+export const RemoveVoucher = async () => {
+  const res = await axios.post(`${API_BASE_URL}/voucher/remove`, undefined, {
+    withCredentials: true,
+  });
+  return res.data;
+};

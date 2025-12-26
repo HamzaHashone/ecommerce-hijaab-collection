@@ -14,9 +14,7 @@ export const initSocket = (server: any) => {
     "https://ecommerce-hijaab-collection-production.up.railway.app",
     process.env.FRONTEND_URL
   ].filter(Boolean);
-  
-  console.log("🔌 Socket.IO allowed origins:", allowedOrigins);
-  
+    
   io = new Server(server, {
     cors: {
       origin: function (origin, callback) {

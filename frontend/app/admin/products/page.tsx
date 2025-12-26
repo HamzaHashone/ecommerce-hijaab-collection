@@ -160,7 +160,7 @@ export default function AdminProductsPage() {
                             </Badge>
                           )}
                           {Number(product.quantity) <
-                            settings.settings[0].quantityForLowStock && (
+                            settings?.settings?.[0]?.quantityForLowStock && (
                             <Badge variant="destructive">Low Stock</Badge>
                           )}
                         </div>

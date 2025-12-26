@@ -16,19 +16,30 @@ import { mockProducts } from "@/lib/mock-data";
 import { cart } from "@/lib/cart";
 import { useState } from "react";
 import Image from "next/image";
-import { Star, Heart, Share2, Truck, RefreshCw, Shield } from "lucide-react";
+import {
+  Star,
+  Heart,
+  Share2,
+  Truck,
+  RefreshCw,
+  Shield,
+  Trash2,
+} from "lucide-react";
 import { useParams } from "next/navigation";
 import {
   useAddToCart,
   useGetAllProducts,
+  useGetCart,
   useGetProductById,
+  useRemoveFromCart,
+  useUpdateCart,
 } from "@/lib/hooks/api";
-import { IProduct } from "@/lib/API/api";
+import { IProduct, UpdateCart } from "@/lib/API/api";
 import { toast } from "sonner";
 
 export default function ProductDetailPage() {
   const { id } = useParams();
-  const { data } = useGetProductById(id as string);
+  const { data, refetch: refetchProduct } = useGetProductById(id as string);
   const { mutate: AddToCart } = useAddToCart();
   const product = data?.product;
   const { data: products } = useGetAllProducts({
@@ -36,10 +47,14 @@ export default function ProductDetailPage() {
     skip: 0,
     filter: product?.material,
   });
+  const { mutate: UpdateCart } = useUpdateCart();
+  const { mutate: RemoveFromCart } = useRemoveFromCart();
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const { data: cartData, refetch: refetchCart } = useGetCart();
+  const cartItems = cartData?.cart?.items;
 
   if (!product) {
     return (
@@ -70,10 +85,55 @@ export default function ProductDetailPage() {
       {
         onSuccess: () => {
           toast.success("Product Add In Cart Successfully");
+          refetchCart();
+          refetchProduct();
         },
         onError: (err: any) => {
           toast.error(
             err?.response?.data?.message || "Error To Add This Product In Cart"
+          );
+        },
+      }
+    );
+  };
+
+  const handleUpdateCart = (productId: string, qty: number) => {
+    UpdateCart(
+      {
+        productId: productId,
+        color: selectedColor,
+        size: selectedSize,
+        quantity: qty.toString(),
+      },
+      {
+        onSuccess: () => {
+          toast.success("Cart Updated Successfully");
+          refetchCart();
+          refetchProduct();
+        },
+        onError: (err: any) => {
+          toast.error(err?.response?.data?.message || "Error To Update Cart");
+        },
+      }
+    );
+  };
+
+  const handleRemoveFromCart = (
+    productId: string,
+    color: string,
+    size: string
+  ) => {
+    RemoveFromCart(
+      { productId, color, size },
+      {
+        onSuccess: () => {
+          toast.success("Product removed from cart successfully");
+          refetchCart();
+          refetchProduct();
+        },
+        onError: (err: any) => {
+          toast.error(
+            err?.response?.data?.message || "Error to remove product from cart"
           );
         },
       }
@@ -201,38 +261,158 @@ export default function ProductDetailPage() {
                 </Select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Quantity
-                </label>
-                <Select
-                  value={quantity?.toString()}
-                  onValueChange={(value) =>
-                    setQuantity(Number?.parseInt(value))
-                  }
-                >
-                  <SelectTrigger className="w-24">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {[...Array(10)].map((_, i) => (
-                      <SelectItem key={i + 1} value={(i + 1).toString()}>
-                        {i + 1}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              {!cartItems?.find(
+                (item: any) =>
+                  item.productId?.toString() === product._id &&
+                  item.color === selectedColor &&
+                  item.size === selectedSize
+              ) && (
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Quantity
+                  </label>
+                  <Select
+                    value={quantity?.toString()}
+                    onValueChange={(value) =>
+                      setQuantity(Number?.parseInt(value))
+                    }
+                  >
+                    <SelectTrigger className="w-24">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[...Array(10)].map((_, i) => (
+                        <SelectItem key={i + 1} value={(i + 1).toString()}>
+                          {i + 1}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
 
             <div className="flex gap-4 mb-8">
-              <Button
-                // onClick={() => handleAddToCart(product._id)}
-                onClick={() => handleAddToCart(product._id)}
-                className="flex-1 bg-amber-800 hover:bg-amber-900"
-              >
-                Add to Cart
-              </Button>
+              {cartItems?.find(
+                (item: any) =>
+                  item.productId?.toString() === product._id &&
+                  item.color === selectedColor &&
+                  item.size === selectedSize
+              ) ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    disabled={
+                      cartItems?.find(
+                        (item: any) =>
+                          item.productId?.toString() === product._id &&
+                          item.color === selectedColor &&
+                          item.size === selectedSize
+                      )?.quantity <= 1
+                    }
+                    onClick={() =>
+                      handleUpdateCart(
+                        product._id,
+                        cartItems?.find(
+                          (item: any) =>
+                            item.productId?.toString() === product._id &&
+                            item.color === selectedColor &&
+                            item.size === selectedSize
+                        )?.quantity - 1
+                      )
+                    }
+                    className={`text-2xl cursor-pointer border-2 px-2 ${
+                      cartItems?.find(
+                        (item: any) =>
+                          item.productId?.toString() === product._id &&
+                          item.color === selectedColor &&
+                          item.size === selectedSize
+                      )?.quantity <= 1
+                        ? "opacity-50 pointer-events-none"
+                        : ""
+                    }`}
+                  >
+                    -
+                  </button>
+                  <span>
+                    {
+                      cartItems?.find(
+                        (item: any) =>
+                          item.productId?.toString() === product._id &&
+                          item.color === selectedColor &&
+                          item.size === selectedSize
+                      )?.quantity
+                    }
+                  </span>
+                  <button
+                    disabled={
+                      cartItems?.find(
+                        (item: any) =>
+                          item.productId?.toString() === product._id &&
+                          item.color === selectedColor &&
+                          item.size === selectedSize
+                      )?.quantity >=
+                      product?.colors
+                        ?.find((clr: any) => clr.color === selectedColor)
+                        ?.sizes?.find((size: any) => size.size === selectedSize)
+                        ?.quantity
+                    }
+                    onClick={() =>
+                      handleUpdateCart(
+                        product._id,
+                        cartItems?.find(
+                          (item: any) =>
+                            item.productId?.toString() === product._id &&
+                            item.color === selectedColor &&
+                            item.size === selectedSize
+                        )?.quantity + 1
+                      )
+                    }
+                    className={`text-2xl cursor-pointer border-2 px-2 ${
+                      cartItems?.find(
+                        (item: any) =>
+                          item.productId?.toString() === product._id &&
+                          item.color === selectedColor &&
+                          item.size === selectedSize
+                      )?.quantity >=
+                      product?.colors
+                        ?.find((clr: any) => clr.color === selectedColor)
+                        ?.sizes?.find((size: any) => size.size === selectedSize)
+                        ?.quantity
+                        ? "opacity-50 pointer-events-none"
+                        : ""
+                    }`}
+                  >
+                    +
+                  </button>
+                </div>
+              ) : (
+                <Button
+                  // onClick={() => handleAddToCart(product._id)}
+                  onClick={() => handleAddToCart(product._id)}
+                  className="flex-1 bg-amber-800 hover:bg-amber-900"
+                >
+                  Add to Cart
+                </Button>
+              )}
+              {cartItems?.find(
+                (item: any) =>
+                  item.productId?.toString() === product._id &&
+                  item.color === selectedColor &&
+                  item.size === selectedSize
+              ) && (
+                <button
+                  className="flex items-center gap-2 text-red-500 cursor-pointer border border-red-500 px-2 py-1 rounded-md"
+                  onClick={() =>
+                    handleRemoveFromCart(
+                      product._id,
+                      selectedColor,
+                      selectedSize
+                    )
+                  }
+                >
+                  <Trash2 className="h-4 w-4" /> Remove
+                </button>
+              )}
               <Button variant="outline" size="icon">
                 <Heart className="h-4 w-4" />
               </Button>
@@ -240,7 +420,6 @@ export default function ProductDetailPage() {
                 <Share2 className="h-4 w-4" />
               </Button>
             </div>
-
             {/* Features */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-center gap-2 text-sm text-slate-600">

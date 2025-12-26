@@ -11,7 +11,7 @@ export const adminAuthentication = (
 
     // console.log(user.user.role, "user user user");
 
-    if (!user || user.user.role !== "admin") {
+    if (!user || user.role !== "admin") {
       return res
         .status(401)
         .json({ message: "Unauthorized: only admin can use this.." });
@@ -20,6 +20,6 @@ export const adminAuthentication = (
     next();
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Internal server error..kjkjjkjjkhkjhjkhkjh" });
+    return res.status(500).json({ message: "Internal server error.." });
   }
 };

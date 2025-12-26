@@ -13,6 +13,7 @@ import {
   Settings,
   LogOut,
   Plus,
+  Ticket,
 } from "lucide-react";
 import { useLogout } from "@/lib/hooks/api";
 import { toast } from "sonner";
@@ -24,6 +25,7 @@ const navigation = [
   { name: "Customers", href: "/admin/customers", icon: Users },
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { name: "Settings", href: "/admin/settings", icon: Settings },
+  { name: "Vouchers", href: "/admin/voucher", icon: Ticket },
 ];
 
 export function AdminSidebar() {

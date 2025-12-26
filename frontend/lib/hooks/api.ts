@@ -30,6 +30,17 @@ import {
   UpdateSettings,
   AddToCart,
   IAddToCart,
+  GetCart,
+  IUpdateCart,
+  UpdateCart,
+  RemoveFromCart,
+  getAllVouchers,
+  createVoucher,
+  updateVoucher,
+  getVoucherById,
+  deleteVoucher,
+  RemoveVoucher,
+  ApplyVoucher,
 } from "../API/api";
 
 export const useLogin = () => {
@@ -198,5 +209,73 @@ export const useUpdateSettings = () => {
 export const useAddToCart = () => {
   return useMutation({
     mutationFn: (data: IAddToCart) => AddToCart(data),
+  });
+};
+
+export const useUpdateCart = () => {
+  return useMutation({
+    mutationFn: (data: IUpdateCart) => UpdateCart(data),
+  });
+};
+
+export const useGetCart = () => {
+  return useQuery({
+    queryKey: ["getCart"],
+    queryFn: GetCart,
+  });
+};
+
+export const useRemoveFromCart = () => {
+  return useMutation({
+    mutationFn: ({ productId, color, size }: { productId: string; color: string; size: string }) =>
+      RemoveFromCart(productId, color, size),
+  });
+};
+
+export const useCreateVoucher = () => {
+  return useMutation({
+    mutationFn: (data: any) => createVoucher(data),
+  });
+};
+
+export const useGetAllVouchers = (params?: {
+  limit?: number;
+  skip?: number;
+  code?: string;
+}) => {
+  return useQuery({
+    queryKey: ["getAllVouchers", params],
+    queryFn: () => getAllVouchers(params),
+  });
+};
+
+export const useGetVoucherById = (id: string) => {
+  return useQuery({
+    queryKey: ["getVoucherById", id],
+    queryFn: () => getVoucherById(id),
+  });
+};
+
+export const useUpdateVoucher = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => updateVoucher(id, data),
+  });
+};
+
+export const useDeleteVoucher = () => {
+  return useMutation({
+    mutationFn: (id: string) => deleteVoucher(id),
+  });
+};
+
+export const useApplyVoucher = () => {
+  return useMutation({
+    mutationFn: (voucherCode: string) => ApplyVoucher(voucherCode),
+  });
+};
+
+export const useRemoveVoucher = () => {
+  return useMutation({
+    mutationFn: () => RemoveVoucher(),
   });
 };
