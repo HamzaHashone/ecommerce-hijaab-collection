@@ -121,9 +121,23 @@ export const updateCart = async (req: Request, res: Response) => {
         item.size === size
     );
     if (existingItem) {
-      console.log(quantity, "quantity", existingItem.product?.colors?.find((clr: any) => clr.color === color)?.sizes?.find((s: any) => s.size === size)?.quantity, "existingItem.product.quantity");
-      if(quantity > existingItem.product?.colors?.find((clr: any) => clr.color === color)?.sizes?.find((s: any) => s.size === size)?.quantity) {
-        return res.status(400).json({ message: `Only ${existingItem.product?.colors?.find((clr: any) => clr.color === color)?.sizes?.find((s: any) => s.size === size)?.quantity} available in ${size} size ${color} color of ${existingItem.product.title}` });
+      if (
+        quantity >
+        existingItem.product?.colors
+          ?.find((clr: any) => clr.color === color)
+          ?.sizes?.find((s: any) => s.size === size)?.quantity
+      ) {
+        return res
+          .status(400)
+          .json({
+            message: `Only ${
+              existingItem.product?.colors
+                ?.find((clr: any) => clr.color === color)
+                ?.sizes?.find((s: any) => s.size === size)?.quantity
+            } available in ${size} size ${color} color of ${
+              existingItem.product.title
+            }`,
+          });
       }
       existingItem.quantity = Number(quantity);
       existingItem.totalPrice = existingItem.unitPrice * existingItem.quantity;
@@ -154,7 +168,6 @@ export const updateCart = async (req: Request, res: Response) => {
 export const getCart = async (req: Request, res: Response) => {
   try {
     const user = (req as any)?.user;
-    console.log(user, "user");
     const cart = await Cart.findOne({ userId: user._id });
     if (!cart) {
       return res.status(404).json({ message: "Cart not found" });
@@ -203,8 +216,12 @@ export const placeOrder = async (req: Request, res: Response) => {
   const user = (req as any)?.user;
   try {
     const { address, paymentMethod, personalDetails } = req.body;
-    const addresses = await User.findById(user._id).select("addresses") as any;
-    const addressData = addresses?.addresses?.filter((add: any) => add._id.toString() === address.toString());
+    const addresses = (await User.findById(user._id).select(
+      "addresses"
+    )) as any;
+    const addressData = addresses?.addresses?.filter(
+      (add: any) => add._id.toString() === address.toString()
+    );
     if (!addressData) {
       return res.status(404).json({ message: "Address not found" });
     }
@@ -235,15 +252,22 @@ export const placeOrder = async (req: Request, res: Response) => {
         return res.status(404).json({ message: "Product not found" });
       }
 
-      const colorIndex = product.colors.findIndex((clr: any) => clr.color === item.color);
+      const colorIndex = product.colors.findIndex(
+        (clr: any) => clr.color === item.color
+      );
       if (colorIndex === -1) {
         return res.status(404).json({ message: "Color not found" });
       }
-      const sizeIndex = product.colors[colorIndex].sizes.findIndex((s: any) => s.size === item.size);
+      const sizeIndex = product.colors[colorIndex].sizes.findIndex(
+        (s: any) => s.size === item.size
+      );
       if (sizeIndex === -1) {
         return res.status(404).json({ message: "Size not found" });
       }
-      product.colors[colorIndex].sizes[sizeIndex].quantity = (Number(product.colors[colorIndex].sizes[sizeIndex].quantity) - Number(item.quantity)).toString();
+      product.colors[colorIndex].sizes[sizeIndex].quantity = (
+        Number(product.colors[colorIndex].sizes[sizeIndex].quantity) -
+        Number(item.quantity)
+      ).toString();
       product.quantity = Number(product.quantity) - Number(item.quantity);
       await product.save();
     });
@@ -275,8 +299,16 @@ export const placeOrder = async (req: Request, res: Response) => {
     });
 
     await cart.deleteOne();
-    await User.findByIdAndUpdate(user._id, { $inc: { totalOrders: 1, totalSpent: cart.totalPrice - cart.voucherDiscount }, lastOrder: new Date() });
-    return res.status(200).json({ message: "Order created successfully", order });
+    await User.findByIdAndUpdate(user._id, {
+      $inc: {
+        totalOrders: 1,
+        totalSpent: cart.totalPrice - cart.voucherDiscount,
+      },
+      lastOrder: new Date(),
+    });
+    return res
+      .status(200)
+      .json({ message: "Order created successfully", order });
   } catch (error: any) {
     console.error("Error in PlaceOrder:", error);
     return res.status(500).json({ message: error.message });
@@ -290,9 +322,50 @@ export const getOrderById = async (req: Request, res: Response) => {
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
-    return res.status(200).json({ message: "Order fetched successfully", order: order as any });
+    return res
+      .status(200)
+      .json({ message: "Order fetched successfully", order: order as any });
   } catch (error: any) {
     console.error("Error in GetOrderById:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getAllOrders = async (req: Request, res: Response) => {
+  const { search } = req.query;
+  const { limit, skip } = req.query;
+  try {
+    const orders = await Order.find({
+      $or: [
+        { "personalDetails.firstName": { $regex: search, $options: "i" } },
+        { "personalDetails.lastName": { $regex: search, $options: "i" } },
+        { "personalDetails.email": { $regex: search, $options: "i" } },
+        { "personalDetails.phone": { $regex: search, $options: "i" } },
+        { "items.product.title": { $regex: search, $options: "i" } },
+        { "items.product.description": { $regex: search, $options: "i" } },
+      ],
+    });
+    const total = await Order.countDocuments({
+      $and: [
+        { "personalDetails.firstName": { $regex: search, $options: "i" } },
+        { "personalDetails.lastName": { $regex: search, $options: "i" } },
+        { "personalDetails.email": { $regex: search, $options: "i" } },
+        { "personalDetails.phone": { $regex: search, $options: "i" } },
+        { "items.product.title": { $regex: search, $options: "i" } },
+        { "items.product.description": { $regex: search, $options: "i" } },
+      ],
+    });
+    return res
+      .status(200)
+      .json({
+        message: "Orders fetched successfully",
+        orders: orders as any,
+        total: total,
+        limit: limit,
+        skip: skip,
+      });
+  } catch (error: any) {
+    console.error("Error in GetAllOrders:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

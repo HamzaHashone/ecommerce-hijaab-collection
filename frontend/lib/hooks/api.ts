@@ -46,6 +46,7 @@ import {
   IPlaceOrder,
   PlaceOrder,
   GetOrderById,
+  GetAllOrders,
 } from "../API/api";
 
 export const useLogin = () => {
@@ -308,5 +309,16 @@ export const useGetOrderById = (id: string) => {
   return useQuery({
     queryKey: ["getOrderById", id],
     queryFn: () => GetOrderById(id),
+  });
+};
+
+export const useGetAllOrders = (params?: {
+  limit?: number;
+  skip?: number;
+  search?: string;
+}) => {
+  return useQuery({
+    queryKey: ["getAllOrders", params],
+    queryFn: () => GetAllOrders(params),
   });
 };

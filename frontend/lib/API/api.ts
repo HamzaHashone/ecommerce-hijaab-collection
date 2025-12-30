@@ -421,6 +421,15 @@ export const GetOrderById = async (id: string) => {
   return res.data;
 };
 
+export const GetAllOrders = async (params?: {
+  limit?: number;
+  skip?: number;
+  search?: string;
+}) => {
+  const res = await axios.get(`${API_BASE_URL}/cart/orders`, { params, withCredentials: true });
+  return res.data;
+};
+
 export const updateCompanyAddress = async (id: string, data: any) => {
   const res = await axios.put(`${API_BASE_URL}/settings/company-address/${id}`, data, {
     withCredentials: true,

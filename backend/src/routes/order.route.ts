@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { addToCart, getCart, getOrderById, placeOrder, removeFromCart, updateCart } from "../controllers/order.controller";
+import { addToCart, getAllOrders, getCart, getOrderById, placeOrder, removeFromCart, updateCart } from "../controllers/order.controller";
 import { authenticateUser } from "../middlewares/auth.middleware";
+import { adminAuthentication } from "../middlewares/admin.middleware";
 
 const orderRouter = Router();
 
@@ -12,4 +13,5 @@ orderRouter.put("/", authenticateUser, updateCart);
 orderRouter.delete("/", authenticateUser, removeFromCart);
 orderRouter.post("/place-order", authenticateUser, placeOrder);
 orderRouter.get("/order/:id", authenticateUser, getOrderById);
+orderRouter.get("/orders", authenticateUser, adminAuthentication, getAllOrders);
 export default orderRouter;

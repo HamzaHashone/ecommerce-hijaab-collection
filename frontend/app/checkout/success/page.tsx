@@ -76,7 +76,7 @@ export default function CheckoutSuccessPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 mb-2">Total Amount</h3>
-                  <p className="text-slate-900 font-semibold">Rs. {order.totalAmount.toLocaleString()}</p>
+                  <p className="text-slate-900 font-semibold">Rs. {(order.totalAmount - order.voucherDiscount).toLocaleString()}</p>
                 </div>
               </div>
             </CardContent>
@@ -150,14 +150,20 @@ export default function CheckoutSuccessPage() {
               </div>
               <div className="mt-4 pt-4 border-t space-y-2">
                 {order.voucherDiscount > 0 && (
+                  <div className="space-y-2">
+                   <div className="flex justify-between text-sm">
+                    <span className="text-slate-600">Subtotal:</span>
+                    <span className="text-red-600">Rs. {order.totalAmount.toLocaleString()}</span>
+                  </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-600">Discount:</span>
                     <span className="text-green-600">- Rs. {order.voucherDiscount.toLocaleString()}</span>
                   </div>
+                  </div>
                 )}
                 <div className="flex justify-between font-semibold text-lg">
                   <span className="text-slate-900">Total:</span>
-                  <span className="text-slate-900">Rs. {order.totalAmount.toLocaleString()}</span>
+                  <span className="text-slate-900">Rs. {(order.totalAmount - order.voucherDiscount).toLocaleString()}</span>
                 </div>
               </div>
             </CardContent>
