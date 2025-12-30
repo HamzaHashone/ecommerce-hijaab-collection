@@ -115,11 +115,11 @@ export const Register = async (req: Request, res: Response) => {
 };
 
 export const MyProfile = async (req: Request, res: Response) => {
-  // console.log((req as any).user, "req.cookies");
+  console.log((req as any).user, "req.cookies");
   if (!(req as any).user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-  const user = await User.findById((req as any).user.id).select("-password");
+  const user = await User.findById((req as any).user._id).select("-password");
   res.status(200).json({ user });
 };
 
@@ -142,7 +142,7 @@ export const updateProfile = async (req: Request, res: Response) => {
 
     // Update user document
     const updatedUser = await User.findByIdAndUpdate(
-      (req as any).user.id,
+      (req as any).user._id,
       { $set: updates },
       { new: true, runValidators: true, select: "-password" }
     );
@@ -185,7 +185,7 @@ export const addAddress = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "ZIP code is required" });
     }
 
-    const userId = (req as any).user.id;
+    const userId = (req as any).user._id;
     const user = await User.findById(userId);
 
     if (!user) {
@@ -242,7 +242,7 @@ export const deleteAddress = async (req: Request, res: Response) => {
     }
 
     const { id } = req.params; // <-- address _id
-    const userId = (req as any).user.id;
+    const userId = (req as any).user._id;
 
     // Remove address using MongoDB $pull
     const updatedUser = await User.findByIdAndUpdate(
@@ -283,7 +283,7 @@ export const UpdateAddress = async (req: Request, res: Response) => {
     }
 
     const { id } = req.params; // address _id
-    const userId = (req as any).user.id;
+    const userId = (req as any).user._id;
     const { house, city, zip, label = "home", isDefault = false } = req.body;
 
     if (!house) {

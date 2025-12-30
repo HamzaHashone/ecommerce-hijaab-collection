@@ -7,11 +7,6 @@ const OrderSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  cartId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Cart',
-    required: true,
-  },
   status: {
     type: String,
     required: true,
@@ -24,6 +19,26 @@ const OrderSchema = new mongoose.Schema({
   paymentStatus: {
     type: String,
     default: "pending",
+    required: true,
+  },
+  personalDetails: {
+    type: Object,
+    required: true,
+  },
+  shippingAddress: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
+  items: {
+    type: Array,
+    required: true,
+  },
+  totalAmount: {
+    type: Number,
+    required: true,
+  },
+  voucherDiscount: {
+    type: Number,
     required: true,
   },
   createdAt: {

@@ -93,6 +93,9 @@ export const applyVoucher = async (req: Request, res: Response) => {
     if (!voucher) {
       return res.status(400).json({ message: "Voucher not found" });
     }
+    if(voucher.expiresAt < new Date()) {
+      return res.status(400).json({ message: "Voucher expired" });
+    }
     const isValid = cart.items.some(
       (item) => item.productId.toString() === voucher?.productId.toString()
     );

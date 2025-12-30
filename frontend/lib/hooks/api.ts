@@ -41,6 +41,11 @@ import {
   deleteVoucher,
   RemoveVoucher,
   ApplyVoucher,
+  getCompanyAddress,
+  updateCompanyAddress,
+  IPlaceOrder,
+  PlaceOrder,
+  GetOrderById,
 } from "../API/api";
 
 export const useLogin = () => {
@@ -277,5 +282,31 @@ export const useApplyVoucher = () => {
 export const useRemoveVoucher = () => {
   return useMutation({
     mutationFn: () => RemoveVoucher(),
+  });
+};
+
+export const useGetCompanyAddress = () => {
+  return useQuery({
+    queryKey: ["getCompanyAddress"],
+    queryFn: getCompanyAddress,
+  });
+};
+
+export const useUpdateCompanyAddress = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => updateCompanyAddress(id, data),
+  });
+};
+
+export const usePlaceOrder = () => {
+  return useMutation({
+    mutationFn: ({ address, paymentMethod, personalDetails }: IPlaceOrder) => PlaceOrder({ address, paymentMethod, personalDetails }),
+  });
+};
+
+export const useGetOrderById = (id: string) => {
+  return useQuery({
+    queryKey: ["getOrderById", id],
+    queryFn: () => GetOrderById(id),
   });
 };

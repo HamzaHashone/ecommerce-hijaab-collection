@@ -865,10 +865,11 @@ export default function AccountPage() {
                                               <Select
                                                 value={addressFormData.label}
                                                 onValueChange={(value) =>
-                                                  handleAddressInputChange(
-                                                    "label",
-                                                    value
-                                                  )
+                                                  // handleAddressInputChange(
+                                                  //   "label",
+                                                  //   value
+                                                  // )
+                                                  field.onChange(value)
                                                 }
                                               >
                                                 <SelectTrigger className="min-w-full">

@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import app from "./index";
 import http from "http";
 import { initSocket } from "./services/socket";
+import CompanyAddress from "./models/companyAddress";
 
 dotenv.config();
 
@@ -16,6 +17,31 @@ server.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
 
+// Function to initialize default company address
+const initializeCompanyAddress = async () => {
+  try {
+    const existingAddress = await CompanyAddress.findOne();
+    
+    if (!existingAddress) {
+      const dummyAddress = await CompanyAddress.create({
+        name: "Your Company Name",
+        street1: "123 Business Street",
+        city: "New York",
+        state: "NY",
+        zip: "10001",
+        country: "United States",
+        phone: "+1 (555) 123-4567",
+        email: "contact@yourcompany.com",
+      });
+      console.log("✅ Default company address created");
+    } else {
+      console.log("✅ Company address already exists");
+    }
+  } catch (error) {
+    console.error("❌ Error initializing company address:", error);
+  }
+};
+
 // MongoDB Connection (non-blocking - server will start even if MongoDB fails)
 const mongoUri = process.env.MONGO_URI || "";
 
@@ -27,7 +53,11 @@ if (!mongoUri || mongoUri.trim() === "") {
 } else {
   mongoose
     .connect(mongoUri)
-    .then(() => console.log("✅ MongoDB Connected"))
+    .then(() => {
+      console.log("✅ MongoDB Connected");
+      // Initialize company address after successful connection
+      initializeCompanyAddress();
+    })
     .catch((err) => {
       console.error("❌ MongoDB connection error:", err.message);
       console.error("Server will continue running but database operations will fail.");

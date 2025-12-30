@@ -396,3 +396,39 @@ export const RemoveVoucher = async () => {
   });
   return res.data;
 };
+
+export interface IPlaceOrder {
+  address: string;
+  paymentMethod: string;
+  personalDetails: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+  };
+}
+export const PlaceOrder = async (data: IPlaceOrder) => {
+  const res = await axios.post(`${API_BASE_URL}/cart/place-order`, data, {
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+export const GetOrderById = async (id: string) => {
+  const res = await axios.get(`${API_BASE_URL}/cart/order/${id}`, {
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+export const updateCompanyAddress = async (id: string, data: any) => {
+  const res = await axios.put(`${API_BASE_URL}/settings/company-address/${id}`, data, {
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+export const getCompanyAddress = async () => {
+  const res = await axios.get(`${API_BASE_URL}/settings/company-address`);
+  return res.data;
+};
