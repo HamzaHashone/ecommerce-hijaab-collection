@@ -13,7 +13,6 @@
 
 // export default nextConfig
 
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
@@ -28,11 +27,18 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/:path*',
+        source: "/api/:path*",
         destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`,
+        has: [
+          {
+            type: "header",
+            key: "x-forwarded-host",
+            value: "ecommerce-hijaab-collection.vercel.app",
+          },
+        ],
       },
-    ]
+    ];
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;
