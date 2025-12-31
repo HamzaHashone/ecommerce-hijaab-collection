@@ -8,7 +8,11 @@ export function middleware(req: NextRequest) {
   const hasAuthCookie = req.cookies.has("Ecommerce");
   const token = req.cookies.get("Ecommerce")?.value;
   let userRole = "guest";
-  console.log(hasAuthCookie,"hasAuthCookie",token,"token",req,"req",req.cookies,"req.cookies")
+  console.log(hasAuthCookie,"hasAuthCookie")
+  console.log(token,"token")
+  console.log(req,"req")
+  console.log(req.cookies,"req.cookies")
+
   // const cookie1 = jwt.verify()
   // const userRole = req.cookies.get("role")?.value || "guest";
   if (token) {
