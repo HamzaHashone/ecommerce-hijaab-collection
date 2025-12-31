@@ -3,7 +3,7 @@ import { User } from "../types";
 
 // Base API URL - use proxied /api path (configured in next.config.mjs rewrites)
 // This ensures cookies work properly by keeping requests on the same origin
-const API_BASE_URL = "/api/v2";
+const API_BASE_URL = "api/v2";
 
 export interface LoginProps {
   email: string;
