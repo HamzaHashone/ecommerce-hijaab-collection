@@ -18,7 +18,7 @@ export function Header() {
   const searchRef = useRef<HTMLDivElement>(null);
   const { data: products } = useGetAllProducts({ title: search });
   const filteredProducts = products?.products;
-  
+
   useEffect(() => {
     cart.loadFromStorage();
     setCartItemCount(cart.getTotalItems());
@@ -27,7 +27,10 @@ export function Header() {
   // Close search dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
         setIsSearchFocused(false);
       }
     };
@@ -85,19 +88,22 @@ export function Header() {
 
           {/* Search and Actions */}
           <div className="flex items-center gap-4 relative">
-            <div ref={searchRef} className="hidden md:flex items-center gap-2 relative">
+            <div
+              ref={searchRef}
+              className="hidden md:flex items-center gap-2 relative"
+            >
               <div className="relative">
-                <Input 
+                <Input
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)} 
+                  onChange={(e) => setSearch(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
-                  placeholder="Search hijabs..." 
-                  className="w-64 pr-8" 
+                  placeholder="Search hijabs..."
+                  className="w-64 pr-8"
                 />
                 {search && (
-                  <Button 
-                    size="icon" 
-                    variant="ghost" 
+                  <Button
+                    size="icon"
+                    variant="ghost"
                     className="absolute right-0 top-0 h-full"
                     onClick={() => {
                       setSearch("");
@@ -115,13 +121,15 @@ export function Header() {
                   <>
                     <div className="p-2 bg-slate-50 border-b border-slate-200">
                       <p className="text-xs font-semibold text-slate-600">
-                        {filteredProducts.length} {filteredProducts.length === 1 ? 'result' : 'results'} found
+                        {filteredProducts.length}{" "}
+                        {filteredProducts.length === 1 ? "result" : "results"}{" "}
+                        found
                       </p>
                     </div>
                     <div className="py-2">
                       {filteredProducts.map((product: any) => (
-                        <Link 
-                          href={`/products/${product.title}`} 
+                        <Link
+                          href={`/products/${product.title}`}
                           key={product._id}
                           onClick={() => {
                             setSearch("");
@@ -132,8 +140,8 @@ export function Header() {
                             {/* Product Image */}
                             <div className="w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-slate-100">
                               {product.images && product.images[0] ? (
-                                <img 
-                                  src={product.images[0]} 
+                                <img
+                                  src={product.images[0]}
                                   alt={product.title}
                                   className="w-full h-full object-cover"
                                 />
@@ -143,14 +151,14 @@ export function Header() {
                                 </div>
                               )}
                             </div>
-                            
+
                             {/* Product Info */}
                             <div className="flex-1 min-w-0">
                               <h4 className="text-sm font-medium text-slate-900 truncate">
                                 {product.title}
                               </h4>
                               <p className="text-xs text-slate-500 truncate mt-0.5">
-                                {product.material || 'Premium Quality'}
+                                {product.material || "Premium Quality"}
                               </p>
                               <p className="text-sm font-semibold text-amber-800 mt-1">
                                 Rs. {product.price?.toLocaleString()}
@@ -161,13 +169,16 @@ export function Header() {
                       ))}
                     </div>
                     <div className="p-2 bg-slate-50 border-t border-slate-200">
-                      <Link href="/products" onClick={() => {
-                        setSearch("");
-                        setIsSearchFocused(false);
-                      }}>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                      <Link
+                        href="/products"
+                        onClick={() => {
+                          setSearch("");
+                          setIsSearchFocused(false);
+                        }}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           className="w-full text-amber-800 hover:text-amber-900 hover:bg-amber-50"
                         >
                           View all products →
@@ -178,7 +189,9 @@ export function Header() {
                 ) : (
                   <div className="p-8 text-center">
                     <Search className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-                    <p className="text-sm font-medium text-slate-900 mb-1">No products found</p>
+                    <p className="text-sm font-medium text-slate-900 mb-1">
+                      No products found
+                    </p>
                     <p className="text-xs text-slate-500">
                       Try searching with different keywords
                     </p>
@@ -246,7 +259,98 @@ export function Header() {
                     Contact
                   </Link>
                   <div className="mt-4">
-                    <Input placeholder="Search hijabs..." />
+                    <Input
+                      placeholder="Search hijabs..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      onFocus={() => setIsSearchFocused(true)}
+                    />
+                    {search !== "" && isSearchFocused && (
+                      <div className="mt-2 w-full bg-white shadow-lg rounded-lg border border-slate-200 overflow-hidden max-h-96 overflow-y-auto">
+                        {filteredProducts?.length > 0 ? (
+                          <>
+                            <div className="p-2 bg-slate-50 border-b border-slate-200">
+                              <p className="text-xs font-semibold text-slate-600">
+                                {filteredProducts.length}{" "}
+                                {filteredProducts.length === 1
+                                  ? "result"
+                                  : "results"}{" "}
+                                found
+                              </p>
+                            </div>
+                            <div className="py-2">
+                              {filteredProducts.map((product: any) => (
+                                <Link
+                                  href={`/products/${product.title}`}
+                                  key={product._id}
+                                  onClick={() => {
+                                    setSearch("");
+                                    setIsSearchFocused(false);
+                                  }}
+                                >
+                                  <div className="flex items-center gap-3 px-3 py-2 hover:bg-amber-50 transition-colors cursor-pointer">
+                                    {/* Product Image */}
+                                    <div className="w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-slate-100">
+                                      {product.images && product.images[0] ? (
+                                        <img
+                                          src={product.images[0]}
+                                          alt={product.title}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-slate-400">
+                                          <ShoppingBag className="h-6 w-6" />
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    {/* Product Info */}
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="text-sm font-medium text-slate-900 truncate">
+                                        {product.title}
+                                      </h4>
+                                      <p className="text-xs text-slate-500 truncate mt-0.5">
+                                        {product.material || "Premium Quality"}
+                                      </p>
+                                      <p className="text-sm font-semibold text-amber-800 mt-1">
+                                        Rs. {product.price?.toLocaleString()}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                            <div className="p-2 bg-slate-50 border-t border-slate-200">
+                              <Link
+                                href="/products"
+                                onClick={() => {
+                                  setSearch("");
+                                  setIsSearchFocused(false);
+                                }}
+                              >
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="w-full text-amber-800 hover:text-amber-900 hover:bg-amber-50"
+                                >
+                                  View all products →
+                                </Button>
+                              </Link>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="p-8 text-center">
+                            <Search className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                            <p className="text-sm font-medium text-slate-900 mb-1">
+                              No products found
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              Try searching with different keywords
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </nav>
               </SheetContent>
