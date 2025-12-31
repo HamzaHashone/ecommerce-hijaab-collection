@@ -10,9 +10,6 @@ export function middleware(req: NextRequest) {
   let userRole = "guest";
   console.log(hasAuthCookie,"hasAuthCookie")
   console.log(token,"token")
-  console.log(req,"req")
-  console.log(req.cookies,"req.cookies")
-
   // const cookie1 = jwt.verify()
   // const userRole = req.cookies.get("role")?.value || "guest";
   if (token) {
