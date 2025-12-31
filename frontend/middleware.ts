@@ -30,22 +30,27 @@ export function middleware(req: NextRequest) {
   }
 
   if (hasAuthCookie && pathname.startsWith("/user/register")) {
+    console.log(hasAuthCookie,"hasAuthCookie",token,"token")
     return NextResponse.redirect(new URL("/user/account", req.url));
   }
 
   if (!hasAuthCookie && pathname.startsWith("/user/account")) {
+    console.log(hasAuthCookie,"hasAuthCookie",token,"token")
     return NextResponse.redirect(new URL("/user/login", req.url));
   }
 
   if (hasAuthCookie && pathname.startsWith("/user/login")) {
+    console.log(hasAuthCookie,"hasAuthCookie",token,"token")
     return NextResponse.redirect(new URL("/user/account", req.url));
   }
 
   if (!hasAuthCookie && pathname.startsWith("/admin")) {
+    console.log(hasAuthCookie,"hasAuthCookie",token,"token")
     return NextResponse.redirect(new URL("/user/login", req.url));
   }
 
   if (hasAuthCookie && pathname.startsWith("/admin") && userRole !== "admin") {
+    console.log(hasAuthCookie,"hasAuthCookie",token,"token")
     return NextResponse.redirect(new URL("/", req.url));
   }
 
