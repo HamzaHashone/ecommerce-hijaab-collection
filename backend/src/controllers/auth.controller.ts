@@ -36,12 +36,11 @@ export const Login = async (req: Request, res: Response) => {
       JWT_SECRET,
       { expiresIn: "7d" } // Token valid for 7 days
     );
+    const isProduction = process.env.NODE_ENV === "production";
     res.cookie("Ecommerce", token, {
       httpOnly: true,
-      // secure: process.env.NODE_ENV === "production",
-      secure: false,
-      // sameSite: "strict",
-      sameSite: "lax",
+      secure: isProduction, // true in production (HTTPS required for cross-origin)
+      sameSite: isProduction ? "none" : "lax", // "none" required for cross-origin cookies
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days expiry
     });
     res
@@ -341,12 +340,12 @@ export const UpdateAddress = async (req: Request, res: Response) => {
 
 export const Logout = async (req: Request, res: Response) => {
   try {
-    console.log("object");
+    const isProduction = process.env.NODE_ENV === "production";
     // Clear the authentication cookie
     res.clearCookie("Ecommerce", {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
     });
 
     res.status(200).json({
