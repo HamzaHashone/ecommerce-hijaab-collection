@@ -6,6 +6,7 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
+import { Suspense } from "react";
 
 // export const metadata: Metadata = {
 //   title: "Hijab Collection - Premium Islamic Fashion",
@@ -35,7 +36,9 @@ html {
       <body>
         <QueryClientProvider client={queryClient}>
           <Toaster/>
-          {children}
+          <Suspense fallback={null}>
+            {children}
+          </Suspense>
         </QueryClientProvider>
       </body>
     </html>
