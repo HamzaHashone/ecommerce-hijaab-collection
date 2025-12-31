@@ -22,27 +22,22 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-      },
-    ],
     unoptimized: true,
   },
-  // Rewrites only work for local development
-  // For production, use direct API calls (see lib/API/api.ts)
   async rewrites() {
-    // Only use rewrites in development
-    if (process.env.NODE_ENV === 'development') {
-      return [
-        {
-          source: "/api/:path*",
-          destination: "http://localhost:5000/api/:path*",
-        },
-      ];
-    }
-    return [];
+    return [
+      {
+        source: "/api/:path*",
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`,
+        has: [
+          {
+            type: "header",
+            key: "x-forwarded-host",
+            value: "ecommerce-hijaab-collection.vercel.app",
+          },
+        ],
+      },
+    ];
   },
 };
 

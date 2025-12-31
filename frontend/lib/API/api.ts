@@ -1,13 +1,9 @@
 import axios from "axios";
 import { User } from "../types";
 
-// Base API URL configuration
-// Development: Use Next.js proxy (/api) for same-origin requests
-// Production: Use direct backend URL from environment variable
-const API_BASE_URL = 
-  process.env.NODE_ENV === 'production' 
-    ? process.env.NEXT_PUBLIC_API_URL 
-    : "/api";
+// Base API URL - use proxied /api path (configured in next.config.mjs rewrites)
+// This ensures cookies work properly by keeping requests on the same origin
+const API_BASE_URL = "/api";
 
 export interface LoginProps {
   email: string;
