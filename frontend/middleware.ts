@@ -8,8 +8,6 @@ export function middleware(req: NextRequest) {
   const hasAuthCookie = req.cookies.has("Ecommerce");
   const token = req.cookies.get("Ecommerce")?.value;
   let userRole = "guest";
-  console.log(hasAuthCookie,"hasAuthCookie2")
-  console.log(token,"token2")
   // const cookie1 = jwt.verify()
   // const userRole = req.cookies.get("role")?.value || "guest";
   if (token) {
@@ -32,27 +30,22 @@ export function middleware(req: NextRequest) {
   }
 
   if (hasAuthCookie && pathname.startsWith("/user/register")) {
-    console.log(hasAuthCookie,"hasAuthCookie",token,"token")
     return NextResponse.redirect(new URL("/user/account", req.url));
   }
 
   if (!hasAuthCookie && pathname.startsWith("/user/account")) {
-    console.log(hasAuthCookie,"hasAuthCookie",token,"token")
     return NextResponse.redirect(new URL("/user/login", req.url));
   }
 
   if (hasAuthCookie && pathname.startsWith("/user/login")) {
-    console.log(hasAuthCookie,"hasAuthCookie",token,"token")
     return NextResponse.redirect(new URL("/user/account", req.url));
   }
 
   if (!hasAuthCookie && pathname.startsWith("/admin")) {
-    console.log(hasAuthCookie,"hasAuthCookie",token,"token")
     return NextResponse.redirect(new URL("/user/login", req.url));
   }
 
   if (hasAuthCookie && pathname.startsWith("/admin") && userRole !== "admin") {
-    console.log(hasAuthCookie,"hasAuthCookie",token,"token")
     return NextResponse.redirect(new URL("/", req.url));
   }
 
@@ -61,7 +54,6 @@ export function middleware(req: NextRequest) {
   //   return NextResponse.redirect(new URL("/admin/dashboard", req.url));
   // }
 
-  console.log(`[MIDDLEWARE] Request allowed: ${pathname}`);
   return NextResponse.next();
 }
 
