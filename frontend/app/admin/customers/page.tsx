@@ -206,8 +206,8 @@ export default function AdminCustomersPage() {
                 >
                   <div className="h-12 w-12 bg-amber-100 rounded-full flex items-center justify-center">
                     <span className="text-amber-800 font-semibold text-lg">
-                      {customer?.firstName[0]}
-                      {customer?.lastName[0]}
+                      {customer?.firstName?.charAt(0)}
+                      {customer?.lastName?.charAt(0)}
                     </span>
                   </div>
 
