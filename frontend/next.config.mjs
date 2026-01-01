@@ -25,12 +25,15 @@ const nextConfig = {
     unoptimized: true,
   },
   async rewrites() {
+    // if (process.env.NODE_ENV === "production") {
     return [
-      {
-        source: "/api/v2/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_URL}:path*`,
-      },
-    ];
+        {
+          source: "/api/v2/:path*",
+          destination: `${process.env.NEXT_PUBLIC_API_URL}:path*`,
+        },
+
+      ];
+    
   },
 };
 

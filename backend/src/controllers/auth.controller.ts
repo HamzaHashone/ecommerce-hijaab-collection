@@ -377,7 +377,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
           subject: "Link To Create New Password",
           templateName: "forgotPassword",
           templateData: {
-            link: `http://localhost:3000/user/forgot-password/${encodedEmail}`,
+            link: `${process.env.FRONTEND_URL}/user/forgot-password/${encodedEmail}`,
           },
         });
         return res.status(200).json({
