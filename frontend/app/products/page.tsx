@@ -23,6 +23,7 @@ import { usePaginationStore } from "@/components/store/PaginationStore";
 import { useDebounce } from "@/lib/DebounceFuncrtion";
 import { IProduct } from "@/lib/API/api";
 import { PaginationDemo } from "@/components/Pagination";
+import ProductsLoading from "./loading";
 
 export default function ProductsPage() {
   const { offset, settotal } = usePaginationStore();
@@ -30,7 +31,7 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState("latest");
   const [filterBy, setFilterBy] = useState("all");
   const debouncedTitle = useDebounce(searchTerm, 500);
-  const { data } = useGetAllProducts({
+  const { data, isLoading } = useGetAllProducts({
     limit: 10,
     skip: offset,
     title: debouncedTitle,
@@ -43,6 +44,10 @@ export default function ProductsPage() {
   useEffect(() => {
     settotal(data?.total);
   }, [data]);
+
+  if (isLoading) {
+    return <ProductsLoading />;
+  }
 
   return (
     <div className="min-h-screen bg-white">

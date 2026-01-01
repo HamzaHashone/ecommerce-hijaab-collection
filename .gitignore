@@ -23,7 +23,6 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files
-.env*
 /backend/.env
 /frontend/.env
 
@@ -34,3 +33,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 frontend/next-env.d.ts
+config.bat
+node_modules

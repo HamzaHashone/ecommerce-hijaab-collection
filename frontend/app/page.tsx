@@ -13,10 +13,11 @@ import { usePaginationStore } from "@/components/store/PaginationStore";
 import { IProduct } from "@/lib/API/api";
 import { useEffect } from "react";
 import { initSocket } from "@/lib/socket/socket";
+import HomePageLoading from "./loading";
 
 export default function HomePage() {
   const { offset } = usePaginationStore();
-  const { data } = useGetAllProducts({
+  const { data, isLoading } = useGetAllProducts({
     limit: 100,
     skip: offset,
     filter: "featured",
@@ -27,6 +28,12 @@ export default function HomePage() {
     const socket = initSocket();
     console.log(socket, "socket");
   }, []);
+  
+  // Show loading skeleton while fetching products
+  if (isLoading) {
+    return <HomePageLoading />;
+  }
+
   // const featuredProducts = mockProducts.filter((product) => product.featured);
 
   return (

@@ -36,10 +36,11 @@ import {
 } from "@/lib/hooks/api";
 import { IProduct, UpdateCart } from "@/lib/API/api";
 import { toast } from "sonner";
+import ProductDetailLoading from "./loading";
 
 export default function ProductDetailPage() {
   const { id } = useParams();
-  const { data, refetch: refetchProduct } = useGetProductById(id as string);
+  const { data, refetch: refetchProduct, isLoading } = useGetProductById(id as string);
   const { mutate: AddToCart } = useAddToCart();
   const product = data?.product;
   const { data: products } = useGetAllProducts({
@@ -55,6 +56,10 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState(0);
   const { data: cartData, refetch: refetchCart } = useGetCart();
   const cartItems = cartData?.cart?.items;
+
+  if (isLoading) {
+    return <ProductDetailLoading />;
+  }
 
   if (!product) {
     return (
