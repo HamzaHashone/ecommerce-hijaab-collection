@@ -1,64 +1,89 @@
-import nodemailer from "nodemailer";
+// import nodemailer from "nodemailer";
+// import ejs from "ejs";
+// import path from "path";
+
+// interface SendEmailParams {
+//   to: string;
+//   subject: string;
+//   templateName: string;
+//   templateData: Record<string, any>;
+// }
+
+// export async function sendEmail({
+//   to,
+//   subject,
+//   templateName,
+//   templateData,
+// }: SendEmailParams) {
+//   // 1. Setup transporter (example using Gmail, replace with your SMTP details)
+//   const transporter = nodemailer.createTransport({
+//     // service: "gmail",
+//     host: "smtp-relay.brevo.com",
+//     port: 587,
+//     auth: {
+//       user: "95c368001@smtp-brevo.com",
+//       pass: "2rMSOcYLyV4pfTRa",
+//     },
+//   });
+
+//   // 2. Render EJS template
+//   const templatePath = path.join(
+//     __dirname,
+//     "..",
+//     "templates",
+//     `${templateName}.ejs`
+//   );
+//   const html = await ejs.renderFile(templatePath, templateData);
+
+//   // 3. Send email
+//   const mailOptions = {
+//     from: "quillcrafts1@gmail.com",
+//     to,
+//     subject,
+//     html,
+//   };
+
+//   return transporter.sendMail(mailOptions);
+// }
+
+
 import ejs from "ejs";
 import path from "path";
-
-interface SendEmailParams {
-  to: string;
-  subject: string;
-  templateName: string;
-  templateData: Record<string, any>;
-}
 
 export async function sendEmail({
   to,
   subject,
   templateName,
   templateData,
-}: SendEmailParams) {
-  // 1. Setup transporter (example using Gmail, replace with your SMTP details)
-  try {
-    const transporter = nodemailer.createTransport({
-      // service: "gmail",
-      host: "smtp-relay.brevo.com",
-      port: 587,
-      auth: {
-        user: `${
-          process.env.NODE_ENV === "production"
-            ? "apikey"
-            : process.env.EMAIL_USER
-        } `,
-        pass: `${process.env.EMAIL_PASSWORD}`,
-      },
-      secure: false,
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 10000,
-    });
+}: any) {
+  const templatePath = path.join(
+    __dirname,
+    "..",
+    "templates",
+    `${templateName}.ejs`
+  );
 
-    await transporter.verify();
-    console.log("Email service is ready to send emails");
-    return { success: true, message: "Email service is ready to send emails" };
-  } catch (error) {
-    console.error("Error in email service:", error);
-    return { success: false, message: "Error in email service" };
+  const html = await ejs.renderFile(templatePath, templateData);
+
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "api-key": process.env.EMAIL_PASSWORD!,
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
+    body: JSON.stringify({
+      sender: { email: process.env.EMAIL_SENDER },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(err);
   }
 
-  // 2. Render EJS template
-  // const templatePath = path.join(
-  //   __dirname,
-  //   "..",
-  //   "templates",
-  //   `${templateName}.ejs`
-  // );
-  // const html = await ejs.renderFile(templatePath, templateData);
-
-  // // 3. Send email
-  // const mailOptions = {
-  //   from: `${process.env.EMAIL_SENDER}`,
-  //   to,
-  //   subject,
-  //   html,
-  // };
-
-  // return transporter.sendMail(mailOptions);
+  return { success: true };
 }
