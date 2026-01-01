@@ -24,6 +24,10 @@ export async function sendEmail({
       user: "95c368001@smtp-brevo.com",
       pass: "2rMSOcYLyV4pfTRa",
     },
+    secure: false,
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
   });
 
   // 2. Render EJS template
