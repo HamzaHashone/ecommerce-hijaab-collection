@@ -59,7 +59,8 @@ export const addToCart = async (req: Request, res: Response) => {
         color,
         size,
         unitPrice: product.price,
-        totalPrice: product.price * Number(quantity),
+        totalPrice: product.price * Number(quantity),]
+        product: null
       });
       await newCart.save();
       return res

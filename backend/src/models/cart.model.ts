@@ -29,7 +29,6 @@ const CartItemSchema = new mongoose.Schema({
   },
   product: {
     type: Object,
-    required: true
   }
 });
 
