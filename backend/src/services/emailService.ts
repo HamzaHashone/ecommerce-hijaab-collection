@@ -16,40 +16,49 @@ export async function sendEmail({
   templateData,
 }: SendEmailParams) {
   // 1. Setup transporter (example using Gmail, replace with your SMTP details)
-  const transporter = nodemailer.createTransport({
-    // service: "gmail",
-    host: "smtp-relay.brevo.com",
-    port: 587,
-    auth: {
-      user: `${
-        process.env.NODE_ENV === "production"
-          ? "apikey"
-          : process.env.EMAIL_USER
-      } `,
-      pass: `${process.env.EMAIL_PASSWORD}`,
-    },
-    secure: false,
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 10000,
-  });
+  try {
+    const transporter = nodemailer.createTransport({
+      // service: "gmail",
+      host: "smtp-relay.brevo.com",
+      port: 587,
+      auth: {
+        user: `${
+          process.env.NODE_ENV === "production"
+            ? "apikey"
+            : process.env.EMAIL_USER
+        } `,
+        pass: `${process.env.EMAIL_PASSWORD}`,
+      },
+      secure: false,
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
+    });
+
+    await transporter.verify();
+    console.log("Email service is ready to send emails");
+    return { success: true, message: "Email service is ready to send emails" };
+  } catch (error) {
+    console.error("Error in email service:", error);
+    return { success: false, message: "Error in email service" };
+  }
 
   // 2. Render EJS template
-  const templatePath = path.join(
-    __dirname,
-    "..",
-    "templates",
-    `${templateName}.ejs`
-  );
-  const html = await ejs.renderFile(templatePath, templateData);
+  // const templatePath = path.join(
+  //   __dirname,
+  //   "..",
+  //   "templates",
+  //   `${templateName}.ejs`
+  // );
+  // const html = await ejs.renderFile(templatePath, templateData);
 
-  // 3. Send email
-  const mailOptions = {
-    from: `${process.env.EMAIL_SENDER}`,
-    to,
-    subject,
-    html,
-  };
+  // // 3. Send email
+  // const mailOptions = {
+  //   from: `${process.env.EMAIL_SENDER}`,
+  //   to,
+  //   subject,
+  //   html,
+  // };
 
-  return transporter.sendMail(mailOptions);
+  // return transporter.sendMail(mailOptions);
 }
