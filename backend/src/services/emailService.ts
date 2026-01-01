@@ -21,8 +21,12 @@ export async function sendEmail({
     host: "smtp-relay.brevo.com",
     port: 587,
     auth: {
-      user: "95c368001@smtp-brevo.com",
-      pass: "2rMSOcYLyV4pfTRa",
+      user: `${
+        process.env.NODE_ENV === "production"
+          ? "apikey"
+          : process.env.EMAIL_USER
+      } `,
+      pass: `${process.env.EMAIL_PASSWORD}`,
     },
     secure: false,
     connectionTimeout: 10000,
@@ -41,7 +45,7 @@ export async function sendEmail({
 
   // 3. Send email
   const mailOptions = {
-    from: "quillcrafts1@gmail.com",
+    from: `${process.env.EMAIL_SENDER}`,
     to,
     subject,
     html,
