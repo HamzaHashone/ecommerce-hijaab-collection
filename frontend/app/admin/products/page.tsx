@@ -26,6 +26,8 @@ import { IProduct } from "@/lib/API/api";
 import { toast } from "sonner";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { useRouter } from "next/navigation";
+import ProductsLoading from "./loading";
+
 export default function AdminProductsPage() {
   const { data: settings } = useGetSettings();
   const router = useRouter();
@@ -47,9 +49,15 @@ export default function AdminProductsPage() {
     title: debounceTitle,
   });
   const { mutate: DeleteProduct, isPending: isDeleting } = useDeleteProduct();
+  
   useEffect(() => {
     settotal(products?.total);
   }, [products]);
+
+  if (productsLoading) {
+    return <ProductsLoading />;
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -121,18 +129,13 @@ export default function AdminProductsPage() {
         </CardContent>
       </Card>
       {/* Products Table */}
-      {productsLoading ? (
-        <div className="flex justify-center items-center h-full">
-          <Loader2 className="w-4 h-4 animate-spin" />
-        </div>
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Products ({products?.total})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {products?.products?.map((product: IProduct) => (
+      <Card>
+        <CardHeader>
+          <CardTitle>Products ({products?.total})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {products?.products?.map((product: IProduct) => (
                 <div
                   key={product._id}
                   className="flex items-center gap-4 p-4 border rounded-lg hover:bg-slate-50"
@@ -223,10 +226,9 @@ export default function AdminProductsPage() {
                   </div>
                 </div>
               ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        </CardContent>
+      </Card>
       <PaginationDemo />
     </div>
   );

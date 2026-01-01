@@ -26,6 +26,7 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
+import SettingsLoading from "./loading";
 
 const companyAddressSchema = z.object({
   name: z.string().min(1),
@@ -164,12 +165,8 @@ const AdminSettingsPage = () => {
       );
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader className="h-8 w-8 animate-spin text-amber-600" />
-      </div>
-    );
+  if (isLoading || isCompanyAddressLoading) {
+    return <SettingsLoading />;
   }
 
   return (

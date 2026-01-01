@@ -35,6 +35,7 @@ import {
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Switch } from "@/components/ui/switch";
+import CustomerDetailLoading from "./loading";
 
 const Page = () => {
   const { id } = useParams();
@@ -89,11 +90,7 @@ const Page = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader className="h-8 w-8 animate-spin text-amber-600" />
-      </div>
-    );
+    return <CustomerDetailLoading />;
   }
 
   if (error || !customer) {

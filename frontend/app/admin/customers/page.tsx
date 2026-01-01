@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { mockUsers, mockOrders } from "@/lib/mock-data";
 import {
   Search,
@@ -35,6 +36,7 @@ import { PaginationDemo } from "@/components/Pagination";
 import { toast } from "sonner";
 import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
+import CustomersLoading from "./loading";
 
 export default function AdminCustomersPage() {
   const { mutate: updateUserStatus, isPending: isUpdatingStatus } =
@@ -46,7 +48,7 @@ export default function AdminCustomersPage() {
 
   const debounceSearch = useDebounce(searchTerm, 500);
   const { offset, settotal } = usePaginationStore();
-  const { data: users, refetch } = useGetAllUsers({
+  const { data: users, refetch, isLoading } = useGetAllUsers({
     limit: 10,
     skip: offset || 0,
     name: debounceSearch,
@@ -69,6 +71,12 @@ export default function AdminCustomersPage() {
   useEffect(() => {
     settotal(users?.total);
   }, [users]);
+
+  // Show loading skeleton while data is being fetched
+  if (isLoading) {
+    return <CustomersLoading />;
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

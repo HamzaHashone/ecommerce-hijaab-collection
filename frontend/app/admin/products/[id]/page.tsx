@@ -7,6 +7,7 @@ import ProductForm from "@/components/ProductForm";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader } from "lucide-react";
+import ProductDetailLoading from "./loading";
 
 const Page = () => {
   const { id } = useParams();
@@ -14,9 +15,15 @@ const Page = () => {
   const { data: product, isLoading: isProductLoading } = useGetProductById(
     id as string
   );
+  
   useEffect(() => {
     setGetProduct(product);
   }, [product]);
+
+  if (isProductLoading) {
+    return <ProductDetailLoading />;
+  }
+
   return (
     <>
       <div className="flex items-center gap-4">
@@ -33,11 +40,7 @@ const Page = () => {
           </p>
         </div>
       </div>
-      {isProductLoading ? (
-        <Loader className="animate-spin h-10 m-auto w-10" />
-      ) : (
-        <ProductForm product={getProduct} />
-      )}
+      <ProductForm product={getProduct} />
     </>
   );
 };

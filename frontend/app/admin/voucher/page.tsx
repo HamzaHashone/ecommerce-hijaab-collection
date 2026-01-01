@@ -17,6 +17,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
+import VoucherLoading from "./loading";
 
 const Page = () => {
   const { offset, settotal } = usePaginationStore();
@@ -41,6 +42,10 @@ const Page = () => {
 
   const isExpired = (date: string) => new Date(date) < new Date();
 
+  if (isLoading) {
+    return <VoucherLoading />;
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -57,11 +62,7 @@ const Page = () => {
         </Link>
       </div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-amber-800" />
-        </div>
-      ) : error ? (
+      {error ? (
         <div className="text-center py-12 text-red-500">
           Failed to load vouchers
         </div>
